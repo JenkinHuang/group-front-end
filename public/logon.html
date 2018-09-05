@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+    <link rel="stylesheet" href="css/login.css" type="text/css">
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+</head>
+<body>
+<div class="login-page">
+        <div class="form">
+            <input type="text" placeholder="用户名" name="username" required="required"/>
+            <input type="password" placeholder="密码" name="password" required="required"/>
+            <input type="email" placeholder="邮箱" name="email" required="required"/>
+            <button id="logon" value="注册">注册</button>
+        </div>
+</div>
+<script>
+    $(function () {
+       $('#logon').click(function () {
+           const username = $("input[name='username']").val();
+           const password = $("input[name='password']").val();
+           const email = $("input[name='email']").val();
+           $.ajax({
+               type: "POST",
+               url: "/group/logon",
+               data: {"username": username, "password": password, "email": email},
+               dataType: "json",
+               success: function (data) {
+                   if (data.code === 0) {
+                       alert("注册成功");
+                       $.ajax({
+                           type: "POST",
+                           url: "http://localhost:8080/group/login",
+                           data: {"username": username, "password": password, rememberMe: true},
+                           dataType: "json",
+                           success: function (data) {
+                               if (data.code === 0) {
+                                   window.location.href = "/index";
+                               } else {
+                                   alert(data.msg);
+                               }
+                           }
+                       });
+                   } else {
+                       alert(data.msg);
+                   }
+               }
+           });
+       });
+    });
+</script>
+</body>
+</html>
